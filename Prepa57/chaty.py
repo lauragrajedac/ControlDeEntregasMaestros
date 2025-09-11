@@ -19,22 +19,22 @@ def crear_servicio():
     # Ruta absoluta para credentials.json (seguro que lo encuentra)
     
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    credentials_path = os.path.join(current_dir, r"c:\Users\Laura\Desktop\Data Scientist\Ejercicios Google Drive\Prepa57\credentials.json")
+    credentials_path = os.path.join(current_dir, r"c:\Users\Laura\Desktop\Data Scientist\Ejercicios Google Drive\secrets\credentials.json")
 
     # Revisamos si ya existe un token guardado
-    if os.path.exists(r"c:\Users\Laura\Desktop\Data Scientist\Ejercicios Google Drive\Prepa57\token.json"):
-        creds = Credentials.from_authorized_user_file(r"c:\Users\Laura\Desktop\Data Scientist\Ejercicios Google Drive\Prepa57\token.json" , SCOPES)
+    if os.path.exists(r"c:\Users\Laura\Desktop\Data Scientist\Ejercicios Google Drive\secrets\token.json"):
+        creds = Credentials.from_authorized_user_file(r"c:\Users\Laura\Desktop\Data Scientist\Ejercicios Google Drive\secrets\token.json" , SCOPES)
     print( creds)
     # Si no hay credenciales válidas, pedimos login
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
+            print("🔄 Renovando credenciales con refresh_token...")
+            generar_token()
         else:
             flow = InstalledAppFlow.from_client_secrets_file(credentials_path, SCOPES)
-            creds = flow.run_local_server(port=8080)
-
+            creds = flow.run_local_server(port=8080, access_type="offline", prompt="consent")
         # Guardamos el token para no pedir login cada vez
-        with open(r"c:\Users\Laura\Desktop\Data Scientist\Ejercicios Google Drive\Prepa57\token.json" , "w") as token:
+        with open(r"c:\Users\Laura\Desktop\Data Scientist\Ejercicios Google Drive\secrets\token.json" , "w") as token:
             token.write(creds.to_json())
 
     # Creamos el servicio de Drive
@@ -48,9 +48,7 @@ def crear_servicio():
 drive_service = crear_servicio()
 
 # Ejemplo: listar los primeros 10 archivos de tu Google Drive
-results = drive_service.files().list(
-    pageSize=10, fields="files(id, name)"
-).execute()
+results = drive_service.files().list( pageSize=10, fields="files(id, name)" ).execute()
 items = results.get("files", [])
 
 if not items:
