@@ -3,7 +3,7 @@ from google.oauth2.credentials import Credentials
 import os
 
 # Archivos
-CREDENTIALS_PATH = r"c:\Users\Laura\Desktop\Data Scientist\Ejercicios Google Drive\Prepa57\credentials.json"   # tu archivo descargado de Google Cloud
+CREDENTIALS_PATH = r"c:\Users\Laura\Desktop\Data Scientist\Ejercicios Google Drive\secrets\credentials.json"   # tu archivo descargado de Google Cloud
 TOKEN_PATH = "token.json"               # aquí se guardará el token
 SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets.readonly",
@@ -13,6 +13,9 @@ SCOPES = [
 def generar_token():
     if not os.path.exists(CREDENTIALS_PATH):
         raise FileNotFoundError(f"No se encontró {CREDENTIALS_PATH}")
+    else:
+        return print("Ya existen credenciales validas")
+        
 
     # Forzar login con refresh_token válido
     flow = InstalledAppFlow.from_client_secrets_file(
@@ -26,5 +29,4 @@ def generar_token():
 
     print(f"✅ Token generado correctamente en {TOKEN_PATH}")
 
-if __name__ == "__main__":
-    generar_token()
+generar_token()
