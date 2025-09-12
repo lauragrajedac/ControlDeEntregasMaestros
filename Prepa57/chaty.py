@@ -102,44 +102,55 @@ for item in results.get('files', []):
         # N'umero decolumna que estamos revisando
     for i, row in enumerate(values, start=10):
         
-        col_index=6 
+        col_index=7
         # print(row)
         # print(i)  # fila real
         # print(col_index)
         # print(row[col_index].strip() ) ### Valor de la fila 10 columna 6 --- en la ultima vuelta cause error porque el indice no existe! en esta columnano hay nada
         # print(len(row))
-        if not row or len(row) == 0 or not row[0] or str(row[0]).strip() == "":
-            print("Ya se terminó de leer el archivo")
-            faltantes.append("No termino")
-            print("Aqui se agrega la frase "+ faltantes)
-            break
-        print(str(row[0]) == "")
-        if  len(row)< col_index or str(row[0]).strip() == "" :
-            if row[0].strip() == "":
-                print("Ya se termino de leer el erchivo")
-                faltantes = []
-                break
-            else:
-                print("Este archivo esta vacio o no esta completo")
-                faltantes.append("No termino")
-                print(faltantes)
-                break
+        if not row or len(row) == 0 or not row[0] :
+            # print(faltantes)
+            print("Hay un error")
+            print( row)
+            # print(not row )
+            # print(len(row) == 0 )
+            print(i)
+            fila_anterior =  i - 1
+            # print(fila_anterior[col_index].strip() != "" )
+            if not row or not row[0] :
+                    if not row :
+                        faltantes.append("No termino")
+                        print("no hay archivo")
+                    elif not row[0]:
+                        if i > 10:
+                            fila_anterior = values[i - 11]
+                            print(len(fila_anterior) > col_index)
+                            print(len(row) < col_index)
+                            print(fila_anterior[col_index].strip() != "")
+                            if (len(fila_anterior) > col_index and len(row) < col_index and fila_anterior[col_index].strip() != ""):
+                                print("Aquí termina la primera tabla")
+                                break
+                            elif (len(fila_anterior) > col_index and fila_anterior[col_index].strip() != ""):
+                                print("Aquí termina la primera tabla, pero agregaron totales al final")
+                                break
+                            elif len(row) <= col_index:
+                                print("en este caso también termina pero parece ser que no inició")
+                                faltantes.append("No termino")
+                                
         else:
-            if  row[col_index].strip() == "" and row <26 :
-                print("Este archivo no esta completamente lleno")
-                faltantes.append("No termino")
-                print ( "Faltante" + faltantes )
-                break
-            else:
-                print("Esta celda si tiene valor, continuamos")
-    print(faltantes)
-    print(faltantes == "No termino")
-    if faltantes == "No termino" :
-        maestrosFaltantes.append(item['name'][:12])
-    print(maestrosFaltantes)
-    faltantes.clear()
-    print(faltantes)
-
+            print("Esta celda si tiene valor, continuamos")
+        
+        print("No termino" in faltantes)
+        if  "No termino" in faltantes :
+            maestrosFaltantes.append(item['name'][:12])
+            print("hubo un faltante")
+            print(maestrosFaltantes)
+            faltantes.clear()
+            print(faltantes)
+            break
+    
+print(maestrosFaltantes)
+print(not maestrosFaltantes)
 
 print(""
 "////////////////////////////////////////////////////////////////////////" \
@@ -187,7 +198,7 @@ def es_ultimo_tres_dias_habiles():
     # últimos 3 hábiles
     dias_habiles = []
     dia = fin_mes
-    while len(dias_habiles) < 15: # Este numero indica cuantos dias habiles antes de fin demes
+    while len(dias_habiles) < 16: # Este numero indica cuantos dias habiles antes de fin demes
         if dia.weekday() < 5:  # 0=lunes, 6=domingo
             dias_habiles.append(dia)
         dia -= timedelta(days=1)
@@ -209,17 +220,19 @@ print( "Enviar whats app")
 from twilio.rest import Client
 
 account_sid = 'AC55b48635d08a0c34ca8679ccf6c6ab7c'
-auth_token = '378eca1211be59fcaa747714f178d382'
+auth_token = 'ceda262f53d1facfe3a80c063b9ad423'
 client = Client(account_sid, auth_token)
-
+print(account_sid)
+print(auth_token)
 
 
 def enviar_whatsapp(mensaje):
 
     if maestrosFaltantes != "" :
+        lista_maestros = ", ".join(str(item) for item in maestrosFaltantes)
         message = client.messages.create(
             from_='whatsapp:+14155238886',  # Este es el número del sandbox
-            body=f'Hola Maestro, ya se revisaron los archivos de la carpeta tal y los siguientes profes {maestrosFaltantes} no han entregado aún 😄, hagamos seguimiento para saber que paso!',
+            body=f'Hola Maestro, ya se revisaron los archivos de la carpeta tal y los siguientes profes {lista_maestros} no han entregado aún 😄, hagamos seguimiento para saber que paso!',
             to='whatsapp:+5215623672099'  # Tu número de WhatsApp verificado
         )
 

@@ -4,14 +4,14 @@ from schedule import repeat, every
 import time
 
 
-# @repeat(every(5).seconds, texto="5 segundos")
+@repeat(every(5).seconds, texto="5 segundos")
 
-# def trabajo_programado(texto):
-#     print(f'Se ejecuto correctamente el codigo {texto}')
+def trabajo_programado(texto):
+    print(f'Se ejecuto correctamente el codigo {texto}')
 
-# while True:
-#     schedule.run_pending()
-#     time.sleep(1)
+while True:
+    schedule.run_pending()
+    time.sleep(5)
 
 
 
