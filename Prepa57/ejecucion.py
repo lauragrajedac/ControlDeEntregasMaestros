@@ -1,24 +1,25 @@
 import schedule
-import subprocess
 from schedule import repeat, every
 import time
+from chaty import *
+import pytz
+
+# Get the complete list of timezones
+# all_timezones_list = pytz.all_timezones
+# print(len(all_timezones_list)) # Prints the number of timezones
+# print(all_timezones_list[:596]) # Prints the first 10 timezones for example
 
 
-@repeat(every(5).seconds, texto="5 segundos")
+def trabajo_programado(text):
+    crear_servicio()
+    mandarMensaje ()
+    print(f'Se ejecuto correctamente el codigo {text}')
 
-def trabajo_programado(texto):
-    print(f'Se ejecuto correctamente el codigo {texto}')
+
+# every().day.at("17:55", "Mexico/General").do(trabajo_programado,text =" 💌 Ya se revisaron los archivos")
+every().minute.do(trabajo_programado,text =" 💌 Ya se revisaron los archivos")
 
 while True:
     schedule.run_pending()
-    time.sleep(5)
+    time.sleep(10)
 
-# Ruta al script que quieres ejecutar
-script_a_ejecutar = r"C:\Users\Laura\Desktop\Data Scientist\Ejercicios Google Drive\Prepa57\chaty.py"
-
-# Ejecuta el script y captura la salida
-resultado = subprocess.run(["python", script_a_ejecutar], capture_output=True, text=True)
-
-# Imprime la salida estándar y los errores (si los hay)
-print("Salida estándar:", resultado.stdout)
-print("Errores:", resultado.stderr)

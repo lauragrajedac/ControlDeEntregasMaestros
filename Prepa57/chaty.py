@@ -87,70 +87,72 @@ results = drive_service.files().list(
     fields="files(id, name, mimeType)"
 ).execute()
 
-maestrosFaltantes= []
-faltantes = []
+def funcionQueRevisaInfo():
+    maestrosFaltantes= []
+    faltantes = []
 
 
-for item in results.get('files', []):
-    SPREADSHEET_ID= item['id']
-    print(f"{item['name']} ({item['id']})")
-    service = crear_serviciosheets()
-    sheet = service.spreadsheets()
-    result = sheet.values().get(spreadsheetId=item['id'], range=RANGE_NAME).execute()
-    values = result.get("values", [])
-    
-        # N'umero decolumna que estamos revisando
-    for i, row in enumerate(values, start=10):
+    for item in results.get('files', []):
+        SPREADSHEET_ID= item['id']
+        print(f"{item['name']} ({item['id']})")
+        service = crear_serviciosheets()
+        sheet = service.spreadsheets()
+        result = sheet.values().get(spreadsheetId=item['id'], range=RANGE_NAME).execute()
+        values = result.get("values", [])
         
-        col_index=7
-        # print(row)
-        # print(i)  # fila real
-        # print(col_index)
-        # print(row[col_index].strip() ) ### Valor de la fila 10 columna 6 --- en la ultima vuelta cause error porque el indice no existe! en esta columnano hay nada
-        # print(len(row))
-        if not row or len(row) == 0 or not row[0] :
-            # print(faltantes)
-            print("Hay un error")
-            print( row)
-            # print(not row )
-            # print(len(row) == 0 )
-            print(i)
-            fila_anterior =  i - 1
-            # print(fila_anterior[col_index].strip() != "" )
-            if not row or not row[0] :
-                    if not row :
-                        faltantes.append("No termino")
-                        print("no hay archivo")
-                    elif not row[0]:
-                        if i > 10:
-                            fila_anterior = values[i - 11]
-                            print(len(fila_anterior) > col_index)
-                            print(len(row) < col_index)
-                            print(fila_anterior[col_index].strip() != "")
-                            if (len(fila_anterior) > col_index and len(row) < col_index and fila_anterior[col_index].strip() != ""):
-                                print("Aquí termina la primera tabla")
-                                break
-                            elif (len(fila_anterior) > col_index and fila_anterior[col_index].strip() != ""):
-                                print("Aquí termina la primera tabla, pero agregaron totales al final")
-                                break
-                            elif len(row) <= col_index:
-                                print("en este caso también termina pero parece ser que no inició")
-                                faltantes.append("No termino")
-                                
-        else:
-            print("Esta celda si tiene valor, continuamos")
+            # N'umero decolumna que estamos revisando
+        for i, row in enumerate(values, start=10):
+            
+            col_index=7
+            # print(row)
+            # print(i)  # fila real
+            # print(col_index)
+            # print(row[col_index].strip() ) ### Valor de la fila 10 columna 6 --- en la ultima vuelta cause error porque el indice no existe! en esta columnano hay nada
+            # print(len(row))
+            if not row or len(row) == 0 or not row[0] :
+                # print(faltantes)
+                print("Hay un error")
+                print( row)
+                # print(not row )
+                # print(len(row) == 0 )
+                print(i)
+                fila_anterior =  i - 1
+                # print(fila_anterior[col_index].strip() != "" )
+                if not row or not row[0] :
+                        if not row :
+                            faltantes.append("No termino")
+                            print("no hay archivo")
+                        elif not row[0]:
+                            if i > 10:
+                                fila_anterior = values[i - 11]
+                                print(len(fila_anterior) > col_index)
+                                print(len(row) < col_index)
+                                print(fila_anterior[col_index].strip() != "")
+                                if (len(fila_anterior) > col_index and len(row) < col_index and fila_anterior[col_index].strip() != ""):
+                                    print("Aquí termina la primera tabla")
+                                    break
+                                elif (len(fila_anterior) > col_index and fila_anterior[col_index].strip() != ""):
+                                    print("Aquí termina la primera tabla, pero agregaron totales al final")
+                                    break
+                                elif len(row) <= col_index:
+                                    print("en este caso también termina pero parece ser que no inició")
+                                    faltantes.append("No termino")
+                                    
+            else:
+                print("Esta celda si tiene valor, continuamos")
+            
+            print("No termino" in faltantes)
+            if  "No termino" in faltantes :
+                maestrosFaltantes.append(item['name'][:12])
+                print("hubo un faltante")
+                print(maestrosFaltantes)
+                faltantes.clear()
+                print(faltantes)
+                break
         
-        print("No termino" in faltantes)
-        if  "No termino" in faltantes :
-            maestrosFaltantes.append(item['name'][:12])
-            print("hubo un faltante")
-            print(maestrosFaltantes)
-            faltantes.clear()
-            print(faltantes)
-            break
-    
-print(maestrosFaltantes)
-print(not maestrosFaltantes)
+    print(maestrosFaltantes)
+    print(not maestrosFaltantes)
+    return maestrosFaltantes
 
 print(""
 "////////////////////////////////////////////////////////////////////////" \
@@ -169,7 +171,7 @@ print(""
 #     for item in items:
 #         print(f"- {item['name']} ({item['id']})")
 
-print("Next step")
+print("Verificando todo para mandar elmansaje de Whats 🗨")
 
 from googleapiclient.discovery import build
 from google.oauth2.credentials import Credentials
@@ -226,13 +228,13 @@ print(account_sid)
 print(auth_token)
 
 
-def enviar_whatsapp(mensaje):
-
+def enviar_whatsapp(maestrosFaltantes):
+    print(maestrosFaltantes)
+    print( maestrosFaltantes != "" )
     if maestrosFaltantes != "" :
-        lista_maestros = ", ".join(str(item) for item in maestrosFaltantes)
         message = client.messages.create(
             from_='whatsapp:+14155238886',  # Este es el número del sandbox
-            body=f'Hola Maestro, ya se revisaron los archivos de la carpeta tal y los siguientes profes {lista_maestros} no han entregado aún 😄, hagamos seguimiento para saber que paso!',
+            body=f'Hola Maestro, ya se revisaron los archivos de la carpeta tal y los siguientes profes {maestrosFaltantes} no han entregado aún 😄, hagamos seguimiento para saber que paso!',
             to='whatsapp:+5215623672099'  # Tu número de WhatsApp verificado
         )
 
@@ -256,22 +258,25 @@ def verificar_mes_actual():
 
     faltantes = []
     for i, row in enumerate(values, start=6):  # fila real
+        print(col_index)
         if len(row) <= col_index or row[col_index].strip() == "":
             faltantes.append(i)
 
-    if faltantes:
-        return f"⚠️ Faltan datos en la columna del mes {mes} en filas: {faltantes}"
+    if faltantes:        
         print("⚠️ Faltan datos en la columna del mes {mes} en filas: {faltantes}")
+        return f"⚠️ Faltan datos en la columna del mes {mes} en filas: {faltantes}"
     else:
-        return f"✅ La columna del mes {mes} está completa."
         print("✅ La columna del mes {mes} está completa.")
+        return f"✅ La columna del mes {mes} está completa."
 
 # --- EJECUCION #3 ---
-
-if es_ultimo_tres_dias_habiles():
-    mensaje = verificar_mes_actual()
-    print("Mensaje"+ mensaje)
-    enviar_whatsapp(mensaje)
-    print("📲 Notificación enviada:", mensaje)
-else:
-    print("Hoy no es uno de los últimos 3 días hábiles del mes.")
+def mandarMensaje ():
+    if es_ultimo_tres_dias_habiles():
+        mensaje = funcionQueRevisaInfo()
+        lista_maestros = ", ".join(str(item) for item in mensaje)
+        print("Estos maestros no han entregado aún"+  lista_maestros)
+        print("Hora de mandar el mensaje por wha")
+        enviar_whatsapp(lista_maestros)
+        print("📲 Notificación enviada al director con los sig nombres: ", lista_maestros)
+    else:
+        print("Hoy no es uno de los últimos 3 días hábiles del mes.")
