@@ -17,9 +17,10 @@ def trabajo_programado(text):
 
 
 # every().day.at("17:55", "Mexico/General").do(trabajo_programado,text =" 💌 Ya se revisaron los archivos")
-every().minute.do(trabajo_programado,text =" 💌 Ya se revisaron los archivos")
+every().second.do(trabajo_programado,text =" 💌 Ya se revisaron los archivos")
 
 while True:
+    
     schedule.run_pending()
-    time.sleep(10)
+    time.sleep(1)
 
