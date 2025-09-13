@@ -13,8 +13,6 @@ while True:
     schedule.run_pending()
     time.sleep(5)
 
-
-
 # Ruta al script que quieres ejecutar
 script_a_ejecutar = r"C:\Users\Laura\Desktop\Data Scientist\Ejercicios Google Drive\Prepa57\chaty.py"
 
