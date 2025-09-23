@@ -1,7 +1,6 @@
 from __future__ import print_function
 import os.path
 import os
-import pickle
 from generarToken import generar_token
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
@@ -12,16 +11,13 @@ from googleapiclient.discovery import build
 SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets.readonly",
     "https://www.googleapis.com/auth/drive.readonly"]
-TOKEN_PATH = r"C:\Users\Laura\Desktop\Data Scientist\Ejercicios Google Drive\secrets\token.json"
-CREDENTIALS_PATH = r"C:\Users\Laura\Desktop\Data Scientist\Ejercicios Google Drive\secrets\credentials.json"
+TOKEN_PATH = r" add your own path"
+CREDENTIALS_PATH = r" add your own path"
 RANGE_NAME= 'A10:Z80'
 
 # --- Crear servicio de conexión con Google Drive ---
 def crear_servicio():
     creds = None
-    # Ruta absoluta para credentials.json (seguro que lo encuentra)
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    credentials_path = os.path.join(current_dir, CREDENTIALS_PATH)
 
     # Revisamos si ya existe un token guardado
     if os.path.exists(TOKEN_PATH):
@@ -47,7 +43,7 @@ def crear_servicio():
 
 drive_service = crear_servicio()
 Spreedsheet_ID = "1_NlphFPPBWMmhDSyeBrInyaNq9oUb5Ds"
-# Ejemplo: listar los primeros 10 archivos de tu Google Drive !!las primeros 10 archivos que estan en drive sin importar carpetas ni nada"
+# Verificando que esta leyendo nuestra carpeta drive correctamente
 try:
     results = drive_service.files().list(
         pageSize=10, fields="files(id, name)"
@@ -57,19 +53,13 @@ try:
     if not items:
         print("No se encontraron archivos.")
     else:
-        print("Archivos encontrados: EXITO!!")
+        print("Archivos encontrados. EXITO!!")
         # for item in items:
         #     print(f"{item['name']} ({item['id']})")
 except Exception as e:
     print("❌ Error al intentar listar archivos:")
     print(e)
 
-print(""
-"////////////////////////////////////////////////////////////////////////" \
-"" \
-"" \
-""
-)
 
 def crear_serviciosheets():
     creds = Credentials.from_authorized_user_file(TOKEN_PATH, ["https://www.googleapis.com/auth/spreadsheets.readonly"])
@@ -104,20 +94,10 @@ def funcionQueRevisaInfo():
         for i, row in enumerate(values, start=10):
             
             col_index=7
-            # print(row)
-            # print(i)  # fila real
-            # print(col_index)
-            # print(row[col_index].strip() ) ### Valor de la fila 10 columna 6 --- en la ultima vuelta cause error porque el indice no existe! en esta columnano hay nada
-            # print(len(row))
+
             if not row or len(row) == 0 or not row[0] :
-                # print(faltantes)
-                print("Hay un error")
-                print( row)
-                # print(not row )
-                # print(len(row) == 0 )
-                print(i)
+
                 fila_anterior =  i - 1
-                # print(fila_anterior[col_index].strip() != "" )
                 if not row or not row[0] :
                         if not row :
                             faltantes.append("No termino")
@@ -154,33 +134,11 @@ def funcionQueRevisaInfo():
     print(not maestrosFaltantes)
     return maestrosFaltantes
 
-print(""
-"////////////////////////////////////////////////////////////////////////" \
-"" \
-"" \
-""
-)
-
-
-# Probar búsqueda de archivos en Drive !!TODOS los que estan en drive sin importar carpetas ni nada"
-# if drive_service:
-#     print("\n📂 Archivos en tu Drive:")
-#     results = drive_service.files().list( fields="files(id, name)"
-#     ).execute()
-#     items = results.get("files", [])
-#     for item in items:
-#         print(f"- {item['name']} ({item['id']})")
-
-print("Verificando todo para mandar elmansaje de Whats 🗨")
 
 from googleapiclient.discovery import build
 from google.oauth2.credentials import Credentials
 from datetime import datetime, timedelta
-import pandas as pd
 from twilio.rest import Client
-
-# --- CONFIGURACIÓN --- # Ajusta rango según tu archivo
-
 
 # Relación Mes -> Columna
 COLUMNAS_MESES = {
@@ -200,7 +158,7 @@ def es_ultimo_tres_dias_habiles():
     # últimos 3 hábiles
     dias_habiles = []
     dia = fin_mes
-    while len(dias_habiles) < 16: # Este numero indica cuantos dias habiles antes de fin demes
+    while len(dias_habiles) < 3: # Este numero indica cuantos dias habiles antes de fin demes
         if dia.weekday() < 5:  # 0=lunes, 6=domingo
             dias_habiles.append(dia)
         dia -= timedelta(days=1)
@@ -217,15 +175,11 @@ client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN )
 TWILIO_WHATSAPP = "whatsapp:+14155238886"  # número oficial Twilio sandbox
 MI_WHATSAPP = "whatsapp:+5215623672099"     # tu número de WhatsApp con código de país
 
-print( "Enviar whats app")
-
 from twilio.rest import Client
 
 account_sid = 'AC55b48635d08a0c34ca8679ccf6c6ab7c'
 auth_token = 'ceda262f53d1facfe3a80c063b9ad423'
 client = Client(account_sid, auth_token)
-print(account_sid)
-print(auth_token)
 
 
 def enviar_whatsapp(maestrosFaltantes):

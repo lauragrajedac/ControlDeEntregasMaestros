@@ -3,8 +3,8 @@ from google.oauth2.credentials import Credentials
 import os
 
 # Archivos
-CREDENTIALS_PATH = r"c:\Users\Laura\Desktop\Data Scientist\Ejercicios Google Drive\secrets\credentials.json"   # tu archivo descargado de Google Cloud
-TOKEN_PATH = r"c:\Users\Laura\Desktop\Data Scientist\Ejercicios Google Drive\secrets\token.json"               # aquí se guardará el token
+CREDENTIALS_PATH = r" add your own path"   # tu archivo descargado de Google Cloud
+TOKEN_PATH = r" add your own path"         # aquí se guardará el token
 SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets.readonly",
     "https://www.googleapis.com/auth/drive.readonly"

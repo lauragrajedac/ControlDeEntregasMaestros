@@ -1,26 +1,17 @@
 import schedule
-from schedule import repeat, every
+from schedule import every
 import time
 from chaty import *
-import pytz
-
-# Get the complete list of timezones
-# all_timezones_list = pytz.all_timezones
-# print(len(all_timezones_list)) # Prints the number of timezones
-# print(all_timezones_list[:596]) # Prints the first 10 timezones for example
-
 
 def trabajo_programado(text):
     crear_servicio()
     mandarMensaje ()
     print(f'Se ejecuto correctamente el codigo {text}')
 
-
-# every().day.at("17:55", "Mexico/General").do(trabajo_programado,text =" 💌 Ya se revisaron los archivos")
-every().second.do(trabajo_programado,text =" 💌 Ya se revisaron los archivos")
+every().second.do(trabajo_programado,text =" Phyton y ya se revisaron los archivos 💌")
 
 while True:
     
     schedule.run_pending()
-    time.sleep(1)
+    time.sleep(10)
 
