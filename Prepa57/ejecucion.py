@@ -1,26 +1,17 @@
 import schedule
-import subprocess
-from schedule import repeat, every
+from schedule import every
 import time
+from chaty import *
 
+def trabajo_programado(text):
+    crear_servicio()
+    mandarMensaje ()
+    print(f'Se ejecuto correctamente el codigo {text}')
 
-# @repeat(every(5).seconds, texto="5 segundos")
+every().second.do(trabajo_programado,text =" Phyton y ya se revisaron los archivos 💌")
 
-# def trabajo_programado(texto):
-#     print(f'Se ejecuto correctamente el codigo {texto}')
+while True:
+    
+    schedule.run_pending()
+    time.sleep(10)
 
-# while True:
-#     schedule.run_pending()
-#     time.sleep(1)
-
-
-
-# Ruta al script que quieres ejecutar
-script_a_ejecutar = r"C:\Users\Laura\Desktop\Data Scientist\Ejercicios Google Drive\Prepa57\chaty.py"
-
-# Ejecuta el script y captura la salida
-resultado = subprocess.run(["python", script_a_ejecutar], capture_output=True, text=True)
-
-# Imprime la salida estándar y los errores (si los hay)
-print("Salida estándar:", resultado.stdout)
-print("Errores:", resultado.stderr)
